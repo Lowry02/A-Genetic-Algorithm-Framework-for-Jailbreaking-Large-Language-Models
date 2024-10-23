@@ -19,7 +19,7 @@ class Chat:
       quantization_config = BitsAndBytesConfig(load_in_8bit=quantized)
       self.model = AutoModelForCausalLM.from_pretrained(self.model_name, quantization_config=quantization_config, device_map='auto', token=token)
     else:
-      self.model = AutoModelForCausalLM.from_pretrained(self.model_name, device_map='auto', token=token, cache_dir="/leonardo_scratch/fast/uTS24_Manzoni/hf/hf")
+      self.model = AutoModelForCausalLM.from_pretrained(self.model_name, device_map='auto', token=token)
     
   def ask(self, prompt:str | list, max_new_tokens:int=10) -> Union[str|list, torch.Tensor]:
     ## Return
@@ -29,7 +29,17 @@ class Chat:
     assert isinstance(max_new_tokens, int), "max_new_tokens must be an int"
     
     with torch.no_grad():
-      encoded_input =  self.tokenizer(prompt, padding=True, return_tensors='pt').to(self.device)
+      if isinstance(prompt, str):
+        messages = [{"role": "user", "content": f"{prompt}"}]
+        prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+      else:
+        messages = [
+          [{"role": "user", "content": f"{string}"}]
+          for string in prompt
+        ]
+        prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+
+      encoded_input = self.tokenizer(prompt, padding=True, return_tensors='pt').to(self.device)
       output = self.model.generate(
         **encoded_input,
         # generation_config=self.generation_config,
@@ -44,7 +54,7 @@ class Chat:
       responses = self.tokenizer.batch_decode(output.sequences, skip_special_tokens=True)
       output.scores = torch.stack(output.scores)    # generated_tokens x batch_size x scores
       probs = nn.Softmax(dim=2)(output.scores)
-
+        
     return responses, probs
   
   def tokenize(self, string:str) -> BatchEncoding:
