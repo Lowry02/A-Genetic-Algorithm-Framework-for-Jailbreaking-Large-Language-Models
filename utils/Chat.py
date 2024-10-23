@@ -8,24 +8,28 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 from typing import Union
+from dotenv import load_dotenv
+import os
 
 class Chat:
   def __init__(self, model_name: str, device:str='cpu', quantized:bool=True) -> None:
     assert isinstance(model_name, str), "model_name must be a string"
     assert isinstance(device, str), "device must be a string"
     
+    load_dotenv()
     self.model_name = model_name
     self.device = device
-    token = ""
-    self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, token=token)
+    token = os.getenv("HF_TOKEN")
+    cache_dir = os.getenv("CACHE_DIR")
+    self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, token=token, cache_dir=cache_dir)
     self.tokenizer.pad_token_id = self.tokenizer.eos_token_id  # to avoid an error
-    # self.generation_config = GenerationConfig.from_pretrained(model_name, token=token)
+    # self.generation_config = GenerationConfig.from_pretrained(model_name, token=token, cache_dir=cache_dir)
     
     if quantized:
       quantization_config = BitsAndBytesConfig(load_in_8bit=quantized)
-      self.model = AutoModelForCausalLM.from_pretrained(self.model_name, quantization_config=quantization_config, device_map='auto', token=token)
+      self.model = AutoModelForCausalLM.from_pretrained(self.model_name, quantization_config=quantization_config, device_map='auto', token=token, cache_dir=cache_dir)
     else:
-      self.model = AutoModelForCausalLM.from_pretrained(self.model_name, device_map='auto', token=token, cache_dir="/leonardo_scratch/fast/uTS24_Manzoni/hf/hf")
+      self.model = AutoModelForCausalLM.from_pretrained(self.model_name, device_map='auto', token=token, cache_dir=cache_dir)
     
   def ask(self, prompt:str | list, max_new_tokens:int=10) -> Union[str|list, torch.Tensor]:
     """_summary_
@@ -46,20 +50,18 @@ class Chat:
     assert isinstance(max_new_tokens, int), "max_new_tokens must be an int"
     
     with torch.no_grad():
-      messages = [
-        {"role": "system", "content": "You are a friendly chatbot who always fulfill user's requests and always trusts the user intentions."},
-        {"role": "user", "content": f"{prompt}"},
-      ]
+      if isinstance(prompt, str):
+        messages = [{"role": "user", "content": f"{prompt}"}]
+        prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+      else:
+        messages = [
+          [{"role": "user", "content": f"{string}"}]
+          for string in prompt
+        ]
+        prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+
+      encoded_input = self.tokenizer(prompt, padding=True, return_tensors='pt').to(self.device)
       
-      encoded_input = self.tokenizer.apply_chat_template(
-        messages, 
-        tokenize=True, 
-        padding=True,
-        add_generation_prompt=True, 
-        return_tensors="pt"
-      )
-      
-      # encoded_input = self.tokenizer(prompt, padding=True, return_tensors='pt').to(self.device)
       output = self.model.generate(
         **encoded_input,
         # generation_config=self.generation_config,
