@@ -15,6 +15,7 @@ class AdversarialAttack():
     logger:Logger=None,
     population_size:int=10,
     mutation_probability:int=0.01,
+    tournament_size:int=2,
     stop_criterion:int=1000,
     adv_suffix_length:int=100,
     batch_size:int=10,
@@ -28,9 +29,10 @@ class AdversarialAttack():
     self.logger = logger
     self.population_size = population_size
     self.mutation_probability = mutation_probability
+    self.tournament_size = tournament_size 
     self.stop_criterion = stop_criterion
     self.target_token = target_token
-    self.target_id = chat.tokenize(self.target_token).item()
+    self.target_id = None if chat == None else chat.tokenize(self.target_token).item()
     self.adv_suffix_length = adv_suffix_length
     self.elitist_individuals = int(self.population_size * elitism_percentage)
     self.batch_size = batch_size
@@ -42,7 +44,8 @@ class AdversarialAttack():
     self.METHODS = [self._GENETIC_METHOD, self._RANDOM_SEARCH_METHOD]
   
   def create_population(self) -> torch.Tensor:
-    vocab_size = self.chat.tokenizer.vocab_size
+    # vocab_size = self.chat.tokenizer.vocab_size
+    vocab_size = 100
     population = torch.randint(0, vocab_size, (self.population_size,self.adv_suffix_length))
     return population
   
@@ -77,28 +80,23 @@ class AdversarialAttack():
     probs = probs.to('cpu')
     return fitness, probs, responses
   
-  def selection_function(self, probs: torch.Tensor, population: torch.Tensor) -> torch.Tensor:
-    individuals_size = len(probs) + len(probs)%2
-    individuals = torch.multinomial(probs, num_samples=individuals_size, replacement=True)
+  def roulette_wheel_selection(self, probs: torch.Tensor, population: torch.Tensor) -> torch.Tensor:
+    individuals_number = len(probs) + len(probs)%2
+    individuals = torch.multinomial(probs, num_samples=individuals_number, replacement=True)
     pairs = torch.reshape(individuals, (-1, 2)).to('cpu')
     pairs = population[pairs]
     return pairs
   
-  def tournament_selection(self, probs: torch.Tensor, population: torch.Tensor, tournament_size: int = 2) -> torch.Tensor:
-    individuals_size = len(probs) + len(probs)%2
-    selected = []
-
-    for _ in range(individuals_size):
-        tournament_idxs = torch.randint(0, len(probs), (tournament_size,))
-        tournament_individuals = population[tournament_idxs]
-        tournament_probs = probs[tournament_idxs]
-        winner_idx = torch.argmax(tournament_probs)
-        selected.append(tournament_individuals[winner_idx])
-
-    selected = torch.stack(selected)
-    pairs = torch.reshape(selected, (-1, 2)).to('cpu')
+  def tournament_selection(self, probs: torch.Tensor, population: torch.Tensor) -> torch.Tensor:
+    individuals_number = len(probs) + len(probs)%2
+    individuals_idxs = torch.randint(0, len(probs), size=(individuals_number, self.tournament_size))
+    tournament_individuals = population[individuals_idxs]
+    tournament_probs = probs[individuals_idxs]
+    tournament_best = torch.argmax(tournament_probs, dim=1)
+    tournament_individuals = tournament_individuals[range(individuals_number), tournament_best]
+    pairs = torch.reshape(tournament_individuals, (-1, 2, self.adv_suffix_length)).to('cpu')
     return pairs
-  
+    
   def crossover_function(self, individuals_pairs: torch.Tensor) -> torch.Tensor:
     split_point = torch.randint(1, self.adv_suffix_length - 1, (1,)).item()
     children_a = torch.concat((individuals_pairs[:, 0, :split_point], individuals_pairs[:, 1, split_point:]), dim=1)
@@ -154,7 +152,7 @@ class AdversarialAttack():
       print(f"> Responses: {responses}")
       print(f"> Best fitness: {torch.max(fitness)}")
       print(f"> Best probs: {torch.max(probs)}")
-      individuals_pairs = self.selection_function(probs, population)
+      individuals_pairs = self.tournament_selection(probs, population)
       offspring = self.crossover_function(individuals_pairs)
       offspring = self.mutation_function(offspring)
       population = self.update_population(population, offspring.detach().clone(), probs)
