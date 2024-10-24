@@ -63,7 +63,7 @@ class AdversarialAttack():
       prompts_batch = prompts[i:i+self.batch_size]
       _responses, _probs = self.chat.ask(prompts_batch, max_new_tokens = max_new_tokens)
       _probs = _probs.to('cpu')
-      responses = responses + [response[len(prompts_batch[j]):] for j, response in enumerate(_responses)]
+      responses = responses + [response for response in _responses]
       fitness = torch.concat((fitness, _probs[0, :, self.target_id]), dim=0)
       gc.collect()
       torch.cuda.empty_cache()
