@@ -44,8 +44,7 @@ class AdversarialAttack():
     self.METHODS = [self._GENETIC_METHOD, self._RANDOM_SEARCH_METHOD]
   
   def create_population(self) -> torch.Tensor:
-    # vocab_size = self.chat.tokenizer.vocab_size
-    vocab_size = 100
+    vocab_size = self.chat.tokenizer.vocab_size
     population = torch.randint(0, vocab_size, (self.population_size,self.adv_suffix_length))
     return population
   
