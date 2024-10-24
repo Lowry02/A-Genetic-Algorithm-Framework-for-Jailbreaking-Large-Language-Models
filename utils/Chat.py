@@ -60,8 +60,8 @@ class Chat:
         ]
         prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
-      encoded_input = self.tokenizer(prompt, padding=True, return_tensors='pt').to(self.device)
-      
+      encoded_input = self.tokenizer(prompt, padding=True, return_tensors='pt', add_special_tokens=False).to(self.device)
+  
       output = self.model.generate(
         **encoded_input,
         # generation_config=self.generation_config,
@@ -73,7 +73,11 @@ class Chat:
         top_p=None,
         pad_token_id=self.tokenizer.eos_token_id,
       )
+      
+      prompt = self.tokenizer.batch_decode(encoded_input['input_ids'], skip_special_tokens=True)
       responses = self.tokenizer.batch_decode(output.sequences, skip_special_tokens=True)
+
+      responses = [response[len(prompt[j]):] for j, response in enumerate(responses)]
       output.scores = torch.stack(output.scores)    # generated_tokens x batch_size x scores
       probs = nn.Softmax(dim=2)(output.scores)
         
