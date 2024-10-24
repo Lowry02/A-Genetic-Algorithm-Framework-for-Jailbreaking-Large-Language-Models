@@ -61,6 +61,7 @@ class Chat:
         prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
       encoded_input = self.tokenizer(prompt, padding=True, return_tensors='pt', add_special_tokens=False).to(self.device)
+  
       output = self.model.generate(
         **encoded_input,
         # generation_config=self.generation_config,
