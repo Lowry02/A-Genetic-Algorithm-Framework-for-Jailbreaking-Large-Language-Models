@@ -84,6 +84,21 @@ class AdversarialAttack():
     pairs = population[pairs]
     return pairs
   
+  def tournament_selection(self, probs: torch.Tensor, population: torch.Tensor, tournament_size: int = 2) -> torch.Tensor:
+    individuals_size = len(probs) + len(probs)%2
+    selected = []
+
+    for _ in range(individuals_size):
+        tournament_idxs = torch.randint(0, len(probs), (tournament_size,))
+        tournament_individuals = population[tournament_idxs]
+        tournament_probs = probs[tournament_idxs]
+        winner_idx = torch.argmax(tournament_probs)
+        selected.append(tournament_individuals[winner_idx])
+
+    selected = torch.stack(selected)
+    pairs = torch.reshape(selected, (-1, 2)).to('cpu')
+    return pairs
+  
   def crossover_function(self, individuals_pairs: torch.Tensor) -> torch.Tensor:
     split_point = torch.randint(1, self.adv_suffix_length - 1, (1,)).item()
     children_a = torch.concat((individuals_pairs[:, 0, :split_point], individuals_pairs[:, 1, split_point:]), dim=1)
