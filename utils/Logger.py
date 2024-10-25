@@ -30,6 +30,7 @@ class Logger():
     header_str = header_str[:-1] + "\n"
     
     self.file.write(header_str)
+    self.file.flush()
     
   def close_file(self) -> None:
     self.file.flush()    
@@ -61,5 +62,7 @@ class Logger():
     line_str = line_str[:-1] + "\n"
     
     self.file.write(line_str)
+    self.file.flush()
+    
       
     
