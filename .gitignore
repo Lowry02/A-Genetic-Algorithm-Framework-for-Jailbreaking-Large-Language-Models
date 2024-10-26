@@ -1,0 +1,8 @@
+.DS_Store
+.env
+.gitignore
+env/
+log/
+*/__pycache__/*
+models--meta-llama--Llama-3.2-3B-Instruct/
+locks/
