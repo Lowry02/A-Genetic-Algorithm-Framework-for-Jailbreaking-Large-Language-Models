@@ -1,3 +1,4 @@
+accelerate==1.0.1
 appnope==0.1.4
 asttokens==2.4.1
 bitsandbytes==0.42.0
