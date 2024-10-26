@@ -45,11 +45,13 @@ device = 'cuda'
 quantized = False
 chat = Chat(model_name, device=device, quantized=quantized)
 
-population_size = 50
+population_size = 30
+tournament_size = 5
 mutation_probability = 0.08
 elitism_percentage = 0.07
-stop_criterion = 1000
+stop_criterion = 2000
 adv_suffix_length = 25
+n_runs = 2
 
 print("> Attack starting...")
 
@@ -61,12 +63,13 @@ attacker = AdversarialAttack(
   stop_criterion=stop_criterion,
   adv_suffix_length=adv_suffix_length,
   elitism_percentage=elitism_percentage,
-  batch_size=batch_size
+  batch_size=batch_size,
+  tournament_size=tournament_size
 )
 
 best_individuals = []
 
-for run in range(1,31):
+for run in range(1,n_runs+1):
   print(f"> Run {run}")
   attacker.run(method='genetic', run=run)
   gc.collect()

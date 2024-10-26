@@ -21,7 +21,7 @@ class Chat:
     self.device = device
     token = os.getenv("HF_TOKEN")
     cache_dir = os.getenv("CACHE_DIR")
-    self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, token=token, cache_dir=cache_dir)
+    self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, token=token, cache_dir=cache_dir, padding_side="left")
     self.tokenizer.pad_token_id = self.tokenizer.eos_token_id  # to avoid an error
     # self.generation_config = GenerationConfig.from_pretrained(model_name, token=token, cache_dir=cache_dir)
     

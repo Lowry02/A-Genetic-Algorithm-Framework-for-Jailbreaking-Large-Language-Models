@@ -38,11 +38,11 @@ def log_responses(input_name:str, output_name:str, chat:Chat) -> None:
   logger.close_file()
 
 # main
-model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
-# model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
+model_name = "meta-llama/Llama-3.2-3B-Instruct"
+# model_name = "meta-llama/Llama-3.2-3B-Instruct"
 device = 'cuda'
 quantized = False
 chat = Chat(model_name, device=device, quantized=quantized)
 
-log_responses(input_name="./rs-llama3.0-8B-suffix.csv", output_name="./rs-responses.csv", chat=chat)
-log_responses(input_name="./ga-llama3.0-8B-suffix.csv", output_name="./ga-responses.csv", chat=chat)
+#log_responses(input_name="./rs-llama3.0-8B-suffix.csv", output_name="./rs-responses.csv", chat=chat)
+log_responses(input_name="./log/llama3.2-3B-suffix.csv", output_name="./log/ga-responses.csv", chat=chat)
