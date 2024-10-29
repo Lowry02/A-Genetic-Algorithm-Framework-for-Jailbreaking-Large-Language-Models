@@ -51,7 +51,7 @@ mutation_probability = 0.08
 elitism_percentage = 0.07
 stop_criterion = 2000
 adv_suffix_length = 25
-n_runs = 2
+n_runs = 10
 
 print("> Attack starting...")
 

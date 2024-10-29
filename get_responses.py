@@ -14,7 +14,7 @@ def get_adv_questions(file_name:str, chat:Chat) -> list[str]:
     suffix = suffix.replace("|", ',')
     suffix = ast.literal_eval(suffix)
     adv_suffix = chat.detokenize([suffix])
-    adv_suffixes.append(PROMPT + adv_suffix[0])
+    adv_suffixes.append(PROMPT) # + adv_suffix[0])
 
   return adv_suffixes
 

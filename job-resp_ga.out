@@ -1,6 +1,14 @@
-/var/spool/slurmd/job8704381/slurm_script: line 12: conda: command not found
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [01:22<04:08, 82.87s/it]Loading checkpoint shards:  50%|█████     | 2/4 [02:43<02:42, 81.28s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [04:04<01:21, 81.56s/it]Loading checkpoint shards: 100%|██████████| 4/4 [04:26<00:00, 57.79s/it]Loading checkpoint shards: 100%|██████████| 4/4 [04:26<00:00, 66.57s/it]
+/var/spool/slurmd/job8766038/slurm_script: line 12: conda: command not found
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [01:15<03:46, 75.54s/it]Loading checkpoint shards:  50%|█████     | 2/4 [02:23<02:22, 71.14s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [03:35<01:11, 71.61s/it]Loading checkpoint shards: 100%|██████████| 4/4 [03:54<00:00, 50.57s/it]Loading checkpoint shards: 100%|██████████| 4/4 [03:54<00:00, 58.52s/it]
 Starting from v4.46, the `logits` model output will have the same type as the model (except at train time, where it will always be FP32)
 From v4.47 onwards, when a model cache is to be returned, `generate` will return a `Cache` instance instead by default (as opposed to the legacy tuple of tuples format). If you want to keep returning the legacy format, please set `return_legacy_cache=True`.
 Generating 1
 Generating 2
+Generating 3
+Generating 4
+Generating 5
+Generating 6
+Generating 7
+Generating 8
+Generating 9
+Generating 10

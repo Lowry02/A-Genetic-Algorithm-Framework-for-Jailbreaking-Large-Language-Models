@@ -2,7 +2,7 @@
 #SBATCH -A uTS24_Bonin
 #SBATCH -p boost_usr_prod
 #SBATCH -N 1
-#SBATCH --time 12:00:00
+#SBATCH --time 24:00:00
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:4
 #SBATCH --job-name=adversarial_ga
