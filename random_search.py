@@ -39,7 +39,7 @@ quantized = False
 chat = Chat(model_name, device=device, quantized=quantized)
 
 population_size = 30
-stop_criterion = 1000
+stop_criterion = 60000
 adv_suffix_length = 25
 
 print("> Attack starting...")
