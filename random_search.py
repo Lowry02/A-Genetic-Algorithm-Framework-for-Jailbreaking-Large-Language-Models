@@ -38,7 +38,7 @@ device = 'cuda'
 quantized = False
 chat = Chat(model_name, device=device, quantized=quantized)
 
-population_size = 30
+population_size = 3
 stop_criterion = 60000
 adv_suffix_length = 25
 

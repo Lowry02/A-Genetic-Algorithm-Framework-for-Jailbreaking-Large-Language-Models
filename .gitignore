@@ -1,8 +1,1 @@
-.DS_Store
-.env
-env/
-log/
-*/__pycache__/*
-models--meta-llama--Llama-3.2-3B-Instruct/
-locks/
-job_*.sh
+

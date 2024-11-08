@@ -1,7 +1,0 @@
-/var/spool/slurmd/job8884747/slurm_script: line 12: conda: command not found
-> GENETIC ALGORITHM[meta-llama/Llama-3.2-3B-Instruct]
-
-> Loading the model...
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [01:11<01:11, 71.07s/it]Loading checkpoint shards: 100%|██████████| 2/2 [01:32<00:00, 42.08s/it]Loading checkpoint shards: 100%|██████████| 2/2 [01:32<00:00, 46.42s/it]
-Starting from v4.46, the `logits` model output will have the same type as the model (except at train time, where it will always be FP32)
-From v4.47 onwards, when a model cache is to be returned, `generate` will return a `Cache` instance instead by default (as opposed to the legacy tuple of tuples format). If you want to keep returning the legacy format, please set `return_legacy_cache=True`.
