@@ -48,5 +48,5 @@ device = 'cuda'
 quantized = False
 chat = Chat(model_name, device=device, quantized=quantized)
 
-#log_responses(input_name="./rs-llama3.0-8B-suffix.csv", output_name="./rs-responses.csv", chat=chat)
-log_responses(input_name="./log/llama3-8B-suffix-1.csv", output_name="./log/ga-responses-3-70B.csv", chat=chat)
+log_responses(input_name="./llama3-8B-ga-suffix.csv", output_name="./ga-responses-3-70B.csv", chat=chat)
+log_responses(input_name="./llama3-8B-rs-suffix.csv", output_name="./rs-responses-3-70B.csv", chat=chat)
