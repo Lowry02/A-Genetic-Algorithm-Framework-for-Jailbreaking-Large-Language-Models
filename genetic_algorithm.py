@@ -11,12 +11,23 @@ parser = ArgumentParser()
 parser.add_argument("-m", "--model_name", dest="model_name", help="Model name to use")
 parser.add_argument("-l", "--log_name", dest="log_name", help="Log file name")
 parser.add_argument("-b", "--batch_size", dest="batch_size", help="Generator batch size", type=int, default=10)
+parser.add_argument("-n", "--n_prompt", dest="n_prompt", help="Number of prompts used to calculate the fitness", type=int, default=1)
+parser.add_argument("-r", "--resume", dest="resume", help="Resume the evolution from the last checkpoint", type=bool, dafult=False)
+
 args = parser.parse_args()
 model_name = args.model_name
 file_name = args.log_name
 batch_size = args.batch_size
+n_prompt = args.n_prompt
+resume = args.resume
 
 print(f"> GENETIC ALGORITHM[{model_name}]\n")
+
+if resume:
+    print(f"> Resuming from checkpoint file")
+else:
+    print("> No checkpoint, starting from scratch...")
+
 print("> Loading the model...")
 
 log_folder = "log"
@@ -32,9 +43,18 @@ header = [
   "fitness_min",
   "fitness_median",
   "fitness_mean",
-  "fitness_std",
-  "sure_count"
+  "fitness_std"
 ]
+for i in range(n_prompt):
+   header += [
+          f"fitness_max{i}", 
+          f"fitness_min{i}", 
+          f"fitness_median{i}", 
+          f"fitness_mean{i}", 
+          f"fitness_std{i}", 
+          f"sure_count{i}"
+        ]
+
 logger = Logger(header=header)
 logger.create_file(f"./log/{file_name}.csv")
 
@@ -45,13 +65,15 @@ device = 'cuda'
 quantized = False
 chat = Chat(model_name, device=device, quantized=quantized)
 
-population_size = 30
+population_size = 50
 tournament_size = 5
 mutation_probability = 0.08
 elitism_percentage = 0.07
-stop_criterion = 2000
+stop_criterion = 1000
 adv_suffix_length = 25
-n_runs = 1
+n_runs = 10
+save_steps = 10
+checkpoint_path = f"./log/{file_name}_ga_checkpoint.json"
 
 print("> Attack starting...")
 
@@ -64,7 +86,11 @@ attacker = AdversarialAttack(
   adv_suffix_length=adv_suffix_length,
   elitism_percentage=elitism_percentage,
   batch_size=batch_size,
-  tournament_size=tournament_size
+  tournament_size=tournament_size,
+  resume=resume,
+  save_steps = save_steps,
+  checkpoint_path = checkpoint_path,
+  n_prompt = n_prompt
 )
 
 best_individuals = []
