@@ -56,9 +56,9 @@ class AdversarialAttack():
         self.checkpoint_data = json.load(f)
     else:
       self.checkpoint_data = None
-
-    ds_path = "../data/harmful_behavior.csv"
-    df = pd.read_csv(ds_path)
+    
+    prompt_path = './data/harmful_behavior.csv'
+    df = pd.read_csv(prompt_path)
     self.base_prompts = []
     for _, question in df.head(n_prompt).iterrows():
       question_id, goal, target_answer = question
@@ -203,7 +203,7 @@ class AdversarialAttack():
             }
           )
         self.logger.log(log_values)
-      print(f"> Responses: {responses[0]}")
+      #print(f"> Responses: {responses[0]}")
       print(f"> Best fitness: {torch.max(fitness)}")
       print(f"> Best probs: {torch.max(probs)}")
       individuals_pairs = self.tournament_selection(probs, population)
@@ -239,14 +239,14 @@ class AdversarialAttack():
             log_values.update(
               {
                 f"fitness_{prompt_id}": fitnesses_2[prompt_id, index].item(),
-                f"sure_generated_{prompt_id}": int(responses_2[prompt_id, index] == self.target_token)
+                f"sure_generated_{prompt_id}": int(responses_2[prompt_id][index] == self.target_token)
               }
             )
           self.logger.log(log_values)
       end = time.time()
       print(f"> New individuals: {(fitness_2 > fitness_1).sum()} / {self.population_size}")
       print(f"> Best fitness: {torch.max(fitness_1)} | {torch.max(fitness_2)}")
-      print(f"> Responses: {responses_2[0]}")
+      #print(f"> Responses: {responses_2[0]}")
       print(f"> Cycle took {end - start}s...")
       population[fitness_2 >= fitness_1] = offspring[fitness_2 >= fitness_1]
       fitness_1[fitness_2 >= fitness_1] = fitness_2[fitness_2 >= fitness_1]

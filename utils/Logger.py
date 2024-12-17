@@ -48,7 +48,6 @@ class Logger():
     Description:
         Logs the data in the CSV file.
     """
-    
     assert type(data) == dict, "data must be a string"
     assert all([col in self.header for col in data.keys()]), "A key in the data keys is not in the header columns."
     

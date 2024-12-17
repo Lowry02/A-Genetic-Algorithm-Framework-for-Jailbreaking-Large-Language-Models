@@ -12,7 +12,7 @@ parser.add_argument("-m", "--model_name", dest="model_name", help="Model name to
 parser.add_argument("-l", "--log_name", dest="log_name", help="Log file name")
 parser.add_argument("-b", "--batch_size", dest="batch_size", help="Generator batch size", type=int, default=10)
 parser.add_argument("-n", "--n_prompt", dest="n_prompt", help="Number of prompts used to calculate the fitness", type=int, default=1)
-parser.add_argument("-r", "--resume", dest="resume", help="Resume the evolution from the last checkpoint", type=bool, dafult=False)
+parser.add_argument("-r", "--resume", dest="resume", help="Resume the evolution from the last checkpoint", type=bool, default=False)
 
 args = parser.parse_args()
 model_name = args.model_name
@@ -47,12 +47,12 @@ header = [
 ]
 for i in range(n_prompt):
    header += [
-          f"fitness_max{i}", 
-          f"fitness_min{i}", 
-          f"fitness_median{i}", 
-          f"fitness_mean{i}", 
-          f"fitness_std{i}", 
-          f"sure_count{i}"
+          f"fitness_max_{i}", 
+          f"fitness_min_{i}", 
+          f"fitness_median_{i}", 
+          f"fitness_mean_{i}", 
+          f"fitness_std_{i}", 
+          f"sure_count_{i}"
         ]
 
 logger = Logger(header=header)
