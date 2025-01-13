@@ -1,6 +1,9 @@
 # Custom rules
 log/
 img/
+incomplete/
+incomplete_rs_3.2/
+old_log/
 *.out
 job*
 .env

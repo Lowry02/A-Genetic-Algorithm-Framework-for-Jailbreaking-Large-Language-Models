@@ -69,9 +69,9 @@ population_size = 50
 tournament_size = 5
 mutation_probability = 0.08
 elitism_percentage = 0.07
-stop_criterion = 1000
+stop_criterion = 500
 adv_suffix_length = 25
-n_runs = 10
+n_runs = 30
 save_steps = 10
 checkpoint_path = f"./log/{file_name}_ga_checkpoint.json"
 

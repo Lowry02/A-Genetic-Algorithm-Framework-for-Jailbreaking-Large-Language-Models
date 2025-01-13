@@ -66,7 +66,7 @@ class AdversarialAttack():
   
   def create_population(self) -> torch.Tensor:
     if self.checkpoint_data:
-      population = torch.tensor(self.checkpoint_data.population)
+      population = torch.tensor(self.checkpoint_data["population"])
     else:
       vocab_size = self.chat.tokenizer.vocab_size
       population = torch.randint(0, vocab_size, (self.population_size,self.adv_suffix_length))
@@ -171,7 +171,7 @@ class AdversarialAttack():
   def genetic_algorithm(self, run:int=1):
     self.best_individuals = []
     population = self.create_population()
-    starting_generation = self.checkpoint_data.iteration if self.checkpoint_data else 0
+    starting_generation = self.checkpoint_data["iteration"] if self.checkpoint_data else 0
 
     for i in range(starting_generation, self.stop_criterion):
       if i % self.save_steps == 0:
@@ -219,7 +219,7 @@ class AdversarialAttack():
     self.best_individuals = []
     population = self.create_population()
     fitness_1 = torch.zeros((population.size(0), ))
-    starting_iteration = self.checkpoint_data.iteration if self.checkpoint_data else 0
+    starting_iteration = self.checkpoint_data["iteration"] if self.checkpoint_data else 0
     
     for i in range(starting_iteration, self.stop_criterion):
       if i % self.save_steps == 0:

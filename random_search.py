@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 import torch
 import gc
 import os
+import json
 
 # random search algorithm
 parser = ArgumentParser()
@@ -55,11 +56,16 @@ device = 'cuda'
 quantized = False
 chat = Chat(model_name, device=device, quantized=quantized)
 
-population_size = 10
+checkpoint_path = f"./log/{file_name}_checkpoint.json"
+if resume:
+   with open(checkpoint_path, 'r') as f:
+      d = json.load(f)
+   population_size = len(d["population"])
+else:
+   population_size = 30
 stop_criterion = 50000
 adv_suffix_length = 25
 save_steps = 500
-checkpoint_path = f"./log/{file_name}_rs_checkpoint.json"
 
 print("> Attack starting...")
 
