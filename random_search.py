@@ -63,9 +63,9 @@ if resume:
    population_size = len(d["population"])
 else:
    population_size = 30
-stop_criterion = 50000
+stop_criterion = 25000
 adv_suffix_length = 25
-save_steps = 500
+save_steps = 100
 
 print("> Attack starting...")
 
